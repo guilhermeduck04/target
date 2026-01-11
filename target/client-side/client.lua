@@ -37,6 +37,62 @@ Citizen.CreateThread(function()
 
 	--=====================================================================--
 
+	AddCircleZone("CallBurgerShot",vec3(-1187.86,-904.92,13.73),0.75,{
+		name = "CallBurgerShot",
+		heading = 136.07
+	},{
+		distance = 1.0,
+		options = {
+			{
+				event = "target:CallWorks",
+				label = "Buscar Entregadores",
+				tunnel = "server"
+			}
+		}
+	})
+
+	AddCircleZone("CallParamedic",vec3(-678.14,326.62,82.96),0.75,{
+		name = "CallParamedic",
+		heading = 136.07
+	},{
+		distance = 2.0,
+		options = {
+			{
+				event = "target:CallWorks",
+				label = "Buscar Doadores",
+				tunnel = "server"
+			}
+		}
+	})
+
+	AddCircleZone("treatment1",vector3(-673.77,325.54,88.02),0.75,{
+		name = "treatment1",
+		heading = 136.07
+	},{
+		distance = 1.25,
+		options = {
+			{
+				event = "checkin:initCheck",
+				label = "Tratamento",
+				tunnel = "client"
+			}
+		}
+	})
+
+	AddCircleZone("treatment2",vector3(-675.12, 326.4, 83.09),0.75,{
+		name = "treatment2",
+		heading = 136.07
+	},{
+		distance = 1.25,
+		options = {
+			{
+				event = "checkin:initCheck",
+				label = "Tratamento",
+				tunnel = "client"
+			}
+		}
+	})
+
 	AddTargetModel({ 1631638868,2117668672,-1498379115,-1519439119,-289946279 },{
 		options = {
 			{
@@ -69,11 +125,38 @@ Citizen.CreateThread(function()
 		},
 		distance = 1.50
 	})
+
+	AddTargetModel({ 
+        669632651, 1437508529, 1329570871, 1143474856, -468629664, -130812911, -58485588, 
+        218085040, -2096124444, 682791951, -2140839391, 1614658037, -1096777189, 
+        -422870120, -1345305746, 1748268526, 684586828, 1511880420, 1114216298 
+    },{
+        options = {
+            {
+                event = "target:vasculhar",
+                label = "Vasculhar",
+                tunnel = "server" -- Envia direto para o servidor para dar a recompensa
+            }
+        },
+        distance = 1.2
+    })
 end)
+
+
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- PARAMEDICMENU
 -----------------------------------------------------------------------------------------------------------------------------------------
 local paramedicMenu = {
+	{
+		event = "paramedic:reanimar",
+		label = "Reanimar",
+		tunnel = "paramedic"
+	},
+	{
+		event = "paramedic:tratamento",
+		label = "Tratamento",
+		tunnel = "paramedic"
+	},
 	{
 		event = "paramedic:maca",
 		label = "Deitar Paciente",
@@ -94,40 +177,19 @@ local paramedicMenu = {
 -- POLICEVEH
 -----------------------------------------------------------------------------------------------------------------------------------------
 local policeVeh = {
-	{
-		event = "target:trunkin",
-		label = "Entrar no Porta-Malas",
+		{
+		event = "Target:Placa",
+		label = "Placa",
 		tunnel = "server"
 	},
-	{
-		event = "target:cv",
-		label = "Colocar na viatura",
-		tunnel = "server"
-	},
-	{
-		event = "target:rv",
-		label = "remover da viatura",
-		tunnel = "server"
-	},
-	{
-		event = "target:capo",
-		label = "abrir capo",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:malas",
-		label = "abrir malas",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:vidros",
-		label = "abrir vidros",
-		tunnel = "client" 
-
-	},
-	
+    { event = "target:trunkin", label = "Entrar no Porta-Malas", tunnel = "server" },
+    { event = "target:cv", label = "Colocar na viatura", tunnel = "server" },
+    { event = "target:rv", label = "Remover da viatura", tunnel = "server" },
+    { event = "target:hood", label = "Abrir/Fechar Capô", tunnel = "client" },
+    { event = "target:trunk", label = "Abrir/Fechar Porta-Malas", tunnel = "client" },
+    { event = "target:doors", label = "Abrir/Fechar Portas", tunnel = "client" }, -- Estilo ox_target
+    { event = "target:windows", label = "Abrir/Fechar Vidros", tunnel = "client" },
+    { event = "target:engine", label = "Ligar/Desligar Motor", tunnel = "client" } -- Estilo ox_target
 }
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- TWOPED
@@ -176,47 +238,16 @@ local adminMenu = {
 -- PLAYERVEH
 -----------------------------------------------------------------------------------------------------------------------------------------
 local playerVeh = {
-	{
-		event = "target:trunkin",
-		label = "Entrar no Porta-Malas",
-		tunnel = "server"
-	},
-	{
-		event = "target:sequestrar",
-		label = "Sequestrar",
-		tunnel = "server" 
-
-	},
-	{
-		event = "target:capo",
-		label = "abrir capo",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:malas",
-		label = "abrir malas",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:vidros",
-		label = "abrir vidros",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:pneu",
-		label = "Remover Pneu",
-		tunnel = "client" 
-
-	},
-	{
-		event = "target:pneucolocar",
-		label = "Colocar Pneu",
-		tunnel = "client" 
-
-	},
+    { event = "target:trunkin", label = "Entrar no Porta-Malas", tunnel = "server" },
+    { event = "target:sequestrar", label = "Sequestrar", tunnel = "server" },
+    { event = "target:hood", label = "Abrir/Fechar Capô", tunnel = "client" },
+    { event = "target:trunk", label = "Abrir/Fechar Porta-Malas", tunnel = "client" },
+    { event = "target:doors", label = "Abrir/Fechar Portas", tunnel = "client" }, -- Estilo ox_target
+    { event = "target:windows", label = "Abrir/Fechar Vidros", tunnel = "client" },
+    { event = "target:engine", label = "Ligar/Desligar Motor", tunnel = "client" }, -- Estilo ox_target
+    { event = "target:checkVeh", label = "Verificar Veículo", tunnel = "client" }, -- Estilo ox_target
+    { event = "target:pneu", label = "Remover Pneu", tunnel = "client" },
+    { event = "target:pneucolocar", label = "Colocar Pneu", tunnel = "client" }
 }
 -----------------------------------------------------------------------------------------------------------------------------------------
 -- PLAYERTARGETENABLE
@@ -714,3 +745,149 @@ exports("AddBoxZone",AddBoxZone)
 exports("AddPolyzone",AddPolyzone)
 exports("AddCircleZone",AddCircleZone)
 exports("AddTargetModel",AddTargetModel)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: CAPÔ (HOOD)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:hood")
+AddEventHandler("target:hood",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        if GetVehicleDoorAngleRatio(vehicle, 4) > 0.0 then
+            SetVehicleDoorShut(vehicle, 4, false)
+        else
+            SetVehicleDoorOpen(vehicle, 4, false, false)
+        end
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: PORTA-MALAS (TRUNK)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:trunk")
+AddEventHandler("target:trunk",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        if GetVehicleDoorAngleRatio(vehicle, 5) > 0.0 then
+            SetVehicleDoorShut(vehicle, 5, false)
+        else
+            SetVehicleDoorOpen(vehicle, 5, false, false)
+        end
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: VIDROS (WINDOWS)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:windows")
+AddEventHandler("target:windows",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        -- Verifica se a janela do condutor está levantada para decidir se abre ou fecha todas
+        if IsVehicleWindowIntact(vehicle, 0) then
+            RollDownWindow(vehicle, 0)
+            RollDownWindow(vehicle, 1)
+            RollDownWindow(vehicle, 2)
+            RollDownWindow(vehicle, 3)
+        else
+            RollUpWindow(vehicle, 0)
+            RollUpWindow(vehicle, 1)
+            RollUpWindow(vehicle, 2)
+            RollUpWindow(vehicle, 3)
+        end
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: PORTAS GERAIS (DOORS)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:doors")
+AddEventHandler("target:doors",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        -- Verifica a porta do condutor para decidir a lógica, ou alterna as portas da frente
+        if GetVehicleDoorAngleRatio(vehicle, 0) > 0.0 or GetVehicleDoorAngleRatio(vehicle, 1) > 0.0 then
+            SetVehicleDoorShut(vehicle, 0, false)
+            SetVehicleDoorShut(vehicle, 1, false)
+            SetVehicleDoorShut(vehicle, 2, false)
+            SetVehicleDoorShut(vehicle, 3, false)
+        else
+            SetVehicleDoorOpen(vehicle, 0, false, false)
+            SetVehicleDoorOpen(vehicle, 1, false, false)
+            SetVehicleDoorOpen(vehicle, 2, false, false)
+            SetVehicleDoorOpen(vehicle, 3, false, false)
+        end
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: MOTOR (ENGINE)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:engine")
+AddEventHandler("target:engine",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        local isRunning = GetIsVehicleEngineRunning(vehicle)
+        SetVehicleEngineOn(vehicle, not isRunning, true, true)
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- VEICULOS: VERIFICAR ESTADO (CHECK)
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:checkVeh")
+AddEventHandler("target:checkVeh",function(data)
+    local vehicle = data[3]
+    if DoesEntityExist(vehicle) then
+        local bodyHealth = GetVehicleBodyHealth(vehicle)
+        local engineHealth = GetVehicleEngineHealth(vehicle)
+        local fuel = GetVehicleFuelLevel(vehicle)
+        
+        -- Formata a mensagem. Pode alterar para usar o sistema de notify do seu servidor.
+        local message = string.format("Lataria: %.1f%% | Motor: %.1f%% | Combustível: %.1f%%", bodyHealth/10, engineHealth/10, fuel)
+        TriggerEvent("Notify","importante",message) -- Certifique-se que o seu servidor usa este evento de Notify
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- ANIM: VASCULHAR
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:animVasculhar")
+AddEventHandler("target:animVasculhar",function()
+    local ped = PlayerPedId()
+    if not IsPedInAnyVehicle(ped) then
+        -- Toca animação de vasculhar
+        vRP._playAnim(false,{{"amb@prop_human_bum_bin@base","base"}},true)
+        -- Congela o jogador durante a ação
+        FreezeEntityPosition(ped,true)
+        Citizen.Wait(3000)
+        -- Solta o jogador
+        FreezeEntityPosition(ped,false)
+        ClearPedTasks(ped)
+    end
+end)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-- EFEITO: MORDIDA DE RATO
+-----------------------------------------------------------------------------------------------------------------------------------------
+RegisterNetEvent("target:ratBite")
+AddEventHandler("target:ratBite",function()
+    local ped = PlayerPedId()
+    
+    -- Som de impacto seco (menos exagerado que o Wasted)
+    PlaySoundFrontend(-1, "Hit", "RESPAWN_ONLINE_SOUNDSET", 1)
+    
+    -- Efeito visual de dano na tela (pisca vermelho)
+    StartScreenEffect("Damage", 0, 0)
+    
+    -- Treme a câmera levemente (reduzi a intensidade para 0.5)
+    ShakeGameplayCam("SMALL_EXPLOSION_SHAKE", 0.05)
+    
+    -- Aplica 10 de dano ao jogador
+    ApplyDamageToPed(ped, 10, false)
+    
+    -- Para o efeito visual após 1 segundo
+    SetTimeout(1000,function()
+        StopScreenEffect("Damage")
+    end)
+end)

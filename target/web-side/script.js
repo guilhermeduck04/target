@@ -1,56 +1,99 @@
-window.addEventListener("message",function(event){
-	let item = event["data"];
+window.addEventListener("message", function(event){
+    let item = event.data;
 
-	if (item["response"] == "openTarget"){
+    if (item.response == "openTarget"){
+        $(".target").css("display", "block");
+        $("#options-left").html("");
+        $("#options-right").html("");
 
-		$(".target-label").html("");
-		$(".target").css("display","flex");
+    } else if (item.response == "closeTarget"){
+        $(".target").css("display", "none");
+        $("#options-left").html("");
+        $("#options-right").html("");
 
-	} else if (item["response"] == "closeTarget"){
+    } else if (item.response == "validTarget"){
+        $("#options-left").html("");
+        $("#options-right").html("");
 
-		$(".target-label").html("");
-		$(".target").css("display","none");
+        $.each(item.data, function(index, data){
+            let iconClass = data.icon ? data.icon : "fa-solid fa-circle";
+            
+            let html = `
+                <div class="option-item" id="target-${index}">
+                    <i class="${iconClass} option-icon"></i>
+                    <span>${data.label}</span>
+                </div>
+            `;
 
-	} else if (item["response"] == "validTarget"){
+            if (index % 2 === 0) {
+                $("#options-right").append(html);
+            } else {
+                $("#options-left").append(html);
+            }
 
-		$(".target-label").html("");
+            $("#target-" + index).data("TargetData", data.event);
+            $("#target-" + index).data("TunnelData", data.tunnel);
+            $("#target-" + index).data("ServiceData", data.service);
+        });
 
-		$.each(item["data"],function(index,item){
-			$(".target-label").append("<div id='target-" + index + "'<li>" + item["label"] + "</li></div>");
+        // AQUI APLICAMOS A CURVA RADIAL
+        applyCurve();
 
-			$("#target-" + index).data("TargetData",item["event"]);
-			$("#target-" + index).data("TunnelData",item["tunnel"]);
-			$("#target-" + index).data("ServiceData",item["service"]);
-		});
+        $(".option-item").click(function(){
+            let eventName = $(this).data("TargetData");
+            let tunnel = $(this).data("TunnelData");
+            let service = $(this).data("ServiceData");
 
-	} else if (item["response"] == "leftTarget"){
+            $.post("http://target/selectTarget", JSON.stringify({ 
+                event: eventName, 
+                tunnel: tunnel, 
+                service: service 
+            }));
 
-		$(".target-label").html("");
-		$(".target").css("display","none");
-		$.post("http://target/closeTarget");
+            $(".target").css("display", "none");
+        });
 
-	}
+    } else if (item.response == "leftTarget"){
+        $(".target").css("display", "none");
+        $.post("http://target/closeTarget");
+    }
 
-	document.onkeyup = data => {
-		if (data["key"] === "Escape"){
-			$(".target-label").html("");
-			$(".target").css("display","none");
-			$.post("http://target/closeTarget");
-		}
-	};
+    document.onkeyup = data => {
+        if (data.key === "Escape"){
+            $(".target").css("display", "none");
+            $.post("http://target/closeTarget");
+        }
+    };
 });
 
-$(document).on("mousedown",(event) => {
-	let element = event["target"];
+// Função matemática para criar o arco
+function applyCurve() {
+    // Configuração da curva
+    const curveIntensity = 20; // Quanto maior, mais curvado fica (pixels)
 
-	if (element["id"].split("-")[0] === "target"){
-		let targetData = $("#" + element["id"]).data("TargetData");
-		let tunnelData = $("#" + element["id"]).data("TunnelData");
-		let serviceData = $("#" + element["id"]).data("ServiceData");
+    // Aplica na Esquerda
+    let leftItems = $("#options-left .option-item");
+    let leftCenter = (leftItems.length - 1) / 2;
+    
+    leftItems.each(function(index) {
+        // Calcula a distância do centro vertical (ex: -1, 0, 1)
+        let dist = Math.abs(index - leftCenter);
+        // Calcula o afastamento (curva exponencial suave)
+        let offset = (dist * dist) * 10; 
+        
+        // Empurra para a ESQUERDA (negativo)
+        $(this).css("transform", `translateX(-${offset}px)`);
+    });
 
-		$.post("http://target/selectTarget",JSON.stringify({ event: targetData, tunnel: tunnelData, service: serviceData }));
+    // Aplica na Direita
+    let rightItems = $("#options-right .option-item");
+    let rightCenter = (rightItems.length - 1) / 2;
 
-		$(".target-label").html("");
-		$(".target").css("display","none");
-	}
-});
+    rightItems.each(function(index) {
+        let dist = Math.abs(index - rightCenter);
+        let offset = (dist * dist) * 10;
+        
+        // Empurra para a DIREITA (positivo)
+        $(this).css("transform", `translateX(${offset}px)`);
+    });
+}
