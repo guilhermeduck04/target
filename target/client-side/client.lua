@@ -140,6 +140,20 @@ Citizen.CreateThread(function()
         },
         distance = 1.2
     })
+
+		AddTargetModel({ 
+        -742198632
+    },{
+        options = {
+            {
+                event = "target:encher",
+                label = "Encher Garrafa",
+                tunnel = "server"
+            }
+        },
+        distance = 1.2
+    })
+	
 end)
 
 
